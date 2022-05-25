@@ -31,24 +31,23 @@
                         <p class="error-text" id="error-educational_stage"></p>
                     </div>
                     
-                    <label for="">Status Sekolah</label>
+                    <div class="form-group">
+                        <label for="">Status Sekolah</label>
+                        <input type="text" name="status" class="form-inputan form-control">
                         <p class="error-text" id="error-status"></p>
-                    <select name="status" class="form-inputan form-select" aria-label="Default select example">
-                        <option value="negeri">Negeri</option>
-                        <option value="swasta">Swasta</option>
-                    </select>
+                    </div>
 
                     <label for="">Alamat</label>
                     <textarea class="form-inputan form-control" name="address" cols="30" rows="5"></textarea>
                         <p class="error-text" id="error-address"></p>
                     <div class="form-group">
                         <label for="">RT</label>
-                        <input type="number" name="rt" class="form-inputan form-control">
+                        <input type="text" name="rt" class="form-inputan form-control">
                         <p class="error-text" id="error-rt"></p>
                     </div>
                     <div class="form-group">
                         <label for="">RW</label>
-                        <input type="number" name="rw" class="form-inputan form-control">
+                        <input type="text" name="rw" class="form-inputan form-control">
                         <p class="error-text" id="error-rw"></p>
                     </div>
                     <div class="form-group">
@@ -109,7 +108,7 @@
                     </div>
                     <div class="form-group">
                         <label for="">Tanggal SK Pendirian</label>
-                        <input type="date" name="establishment_date" class="form-inputan form-control">
+                        <input type="text" name="establishment_date" class="form-inputan form-control">
                         <p class="error-text" id="error-establishment_date"></p>
                     </div>
                     <div class="form-group">
@@ -124,23 +123,14 @@
                     </div>
                     <div class="form-group">
                         <label for="">Tanggal SK Izin Operasional</label>
-                        <input type="date" name="operational_permission_date" class="form-inputan form-control">
+                        <input type="text" name="operational_permission_date" class="form-inputan form-control">
                         <p class="error-text" id="error-operational_permission_date"></p>
                     </div>
-                    <label for="">Kebutuhan Khusus dilayani</label>
-                    <div class="form-check">
-                        <input value="1" class="form-inputan form-check-input" type="radio" name="is_accept_handicap" id="is_accept_handicap1" >
-                        <label class="form-check-label" for="is_accept_handicap1">
-                            Ya
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input value="0" class="form-inputan form-check-input" type="radio" name="is_accept_handicap" id="is_accept_handicap2" checked>
-                        <label class="form-check-label" for="is_accept_handica2">
-                           Tidak
-                        </label>
-                    </div>
+                    <div class="form-group">
+                        <label for="">Kebutuhan Khusus dilayani</label>
+                        <input type="text" name="is_accept_handicap" class="form-inputan form-control">
                         <p class="error-text" id="error-is_accept_handicap"></p>
+                    </div>
                     <div class="form-group">
                         <label for="">Nomor Rekening</label>
                         <input type="text" name="bank_number" class="form-inputan form-control">
@@ -162,28 +152,20 @@
                         <p class="error-text" id="error-bank_owner_name"></p>
                     </div>
                     
-                    <label for="">MBS</label>
-                    <div class="form-check">
-                        <input value="1" class="form-inputan form-check-input" type="radio" name="is_mbs" >
-                        <label class="form-check-label" for="">
-                            Ya
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input value="0" class="form-inputan form-check-input" type="radio" name="is_mbs" checked >
-                        <label class="form-check-label" for="">
-                           Tidak
-                        </label>
-                    </div>
+                    <div class="form-group">
+                        <label for="">MBS</label>
+                        <input type="text" name="is_mbs" class="form-inputan form-control">
                         <p class="error-text" id="error-is_mbs"></p>
+                    </div>
+
                     <div class="form-group">
                         <label for="">Luas Tanah Milik (m2)</label>
-                        <input type="number" name="land_ownership_area" class="form-inputan form-control">
+                        <input type="text" name="land_ownership_area" class="form-inputan form-control">
                         <p class="error-text" id="error-land_ownership_area"></p>
                     </div>
                     <div class="form-group">
                         <label for="">Luas Tanah Bukan Milik (m2)</label>
-                        <input type="number" name="land_not_ownership_area" class="form-inputan form-control">
+                        <input type="text" name="land_not_ownership_area" class="form-inputan form-control">
                         <p class="error-text" id="error-land_not_ownership_area"></p>
                     </div>
                     <div class="form-group">
@@ -236,20 +218,12 @@
                         <p class="error-text" id="error-active_hour"></p>
                     </div>
                     
-                    <label for="">Bersedia Menerima Bos?</label>
-                    <div class="form-check">
-                        <input value="1" class="form-inputan form-check-input" type="radio" name="is_accept_bos" >
-                        <label class="form-check-label" for="">
-                            Ya
-                        </label>
+                    <div class="form-group">
+                        <label for="">Bersedia Menerima Bos?</label>
+                        <input type="text" name="is_accept_bos" class="form-inputan form-control">
+                        <p class="error-text" id="error-is_accept_bos"></p>
                     </div>
-                    <div class="form-check">
-                        <input value="0" class="form-inputan form-check-input" type="radio" name="is_accept_bos" checked >
-                        <label class="form-check-label" for="">
-                           Tidak
-                        </label>
-                    </div>
-                    <p class="error-text" id="error-is_accept_bos"></p>
+
                     <div class="form-group">
                         <label for="">Sertifikasi ISO</label>
                         <input type="text" name="is_iso_certification" class="form-inputan form-control">
@@ -262,7 +236,7 @@
                     </div>
                     <div class="form-group">
                         <label for="">Daya Listrik (Watt)</label>
-                        <input type="number" name="watt" class="form-inputan form-control">
+                        <input type="text" name="watt" class="form-inputan form-control">
                         <p class="error-text" id="error-watt"></p>
                     </div>
                     <div class="form-group">

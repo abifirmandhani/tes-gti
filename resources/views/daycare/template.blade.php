@@ -14,6 +14,7 @@
             .error-text{
                 color: red;
             }
+
         </style>
     </head>
     <body class="p-5">
@@ -30,7 +31,7 @@
                     icon: icon,
                     title: message,
                     showConfirmButton: false,
-                    timer: 1000
+                    timer: 2000
                 })
             }
 

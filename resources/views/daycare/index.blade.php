@@ -4,7 +4,37 @@
  
     <div class="text-right">
         <a href="{{url('daycares/create')}}" class="btn btn-md btn-success">Create Data</a>
+        <button id="btnImport" onclick="openModalFile()" class="btn btn-md btn-primary">
+            <div style="display:none;" class="spinner-border spinner-border-sm spinner-import" role="status">
+                <span  class="visually-hidden">Loading...</span>
+            </div>
+            Import Data
+        </button>
+        
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <input required class="form-control" type="file" id="formFile">
+                <p class="error-text" id="error-file"></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="importCsv()">Save changes</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
     <br>
     <div style="overflow-x: auto;">
         <table class="table table-bordered table-striped table-responsive">
@@ -36,7 +66,7 @@
         </table>
     </div>
     <div class="text-center">
-        <div class="spinner-border" role="status">
+        <div class="spinner-border spinner-border-load" role="status">
             <span class="sr-only"></span>
         </div>
     </div>
@@ -51,6 +81,77 @@
             let url = "{{url('/api/v1/daycares')}}";
             getData(url);
         })
+
+        function openModalFile(){
+            $("#error-file").text("")
+            $("#formFile").val(null);
+            $("#uploadFileModal").modal("show");
+        }
+
+        function importCsv(){  
+
+            fileCsv = $("#formFile").get(0).files[0];
+            if(fileCsv == null){
+                $("#error-file").text("file wajib diisi")
+                return
+            }
+
+            if(fileCsv.size > 1048576  ){
+                console.log(fileCsv.size);
+                $("#error-file").text("Maximal ukuran file 1Mb")
+                return
+            }
+
+            showLoadingImport();
+            $("#uploadFileModal").modal("hide");
+
+            let url = "{{url('/api/v1/import')}}";
+            var formData = new FormData();
+            formData.append("file", fileCsv)
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                success: function (result) {
+                    hideLoadingImport()
+                    if(!result.status){
+                        showMessage(false, result.message);
+                    }else{
+                        renderData([result.data], true);
+                        showMessage(true, "Success");
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    hideLoadingImport()
+                    statusCode = jqXHR.status;
+                    if(statusCode == 400){
+                        data = jqXHR.responseJSON.data;
+                        for (var key in data) {
+                            if (!data.hasOwnProperty(key)) continue;
+                            showMessage(false, "Bad Request : " + data[key]);
+                            return;
+                        }
+                    }else{
+                        showMessage(false, "Internal Server Error");
+                    }
+                },
+                contentType: false,
+                processData: false
+            });
+        }
+
+        function showLoadingImport(){
+            $(".spinner-import").css("display", "");
+            $("#btnImport").text("loading...");
+            $("#btnImport").prop('disabled', true);
+        }
+
+        function hideLoadingImport(){
+            $(".spinner-import").css("display", "none");
+            $("#btnImport").text("Import Data");
+            $("#btnImport").prop('disabled', false);
+        }
 
         function getData(url){
             showLoading()
@@ -78,7 +179,7 @@
             });
         }
 
-        function renderData(data){
+        function renderData(data, isInsertLast = false){
             let html = ``;
             for (let index = 0; index < data.length; index++) {
                 html += `<tr id="row-`+ data[index].id +`">
@@ -102,10 +203,13 @@
 
                 </tr>`;
             }
-            $(".body-table").append(html);
+            if(!isInsertLast){
+                $(".body-table").append(html);
+            }else{
+                $(".body-table").prepend(html);
+            }
         }
 
-        
         function getButtonAction(id){
             return `
                 <a href="{{url('daycares').'/'.'`+id+`'.'/edit'}}" class="col-12 mb-1 btn btn-sm btn-warning">edit</a>
@@ -126,12 +230,12 @@
         }
 
         function hideLoading(){
-            $(".spinner-border").css("visibility", "hidden");
+            $(".spinner-border-load").css("visibility", "hidden");
             showBtnLoadMore();
         }
 
         function showLoading(){
-            $(".spinner-border").css("visibility", "visible");
+            $(".spinner-border-load").css("visibility", "visible");
             hideBtnLoadMore();
         }
 

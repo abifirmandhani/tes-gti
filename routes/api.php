@@ -19,4 +19,5 @@ Route::group([
     "namespace" => "App\Http\Controllers"
 ], function(){
     Route::resource('daycares', DaycareController::class);
+    Route::post('import', "DaycareController@import");
 });
