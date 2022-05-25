@@ -180,11 +180,11 @@ class DaycareController extends Controller
                 );
             }
 
-            daycare::create($payload);
+            $data = daycare::create($payload);
             return $this->ResponseJson(
                 true, 
                 CONFIG("statusmessage.SUCCESS"),
-                $payload
+                $data
             );
         } catch (\Exception $e) {
             Log::error($e);
