@@ -23,7 +23,7 @@
         </div>
         <div class="modal-body">
             <div class="mb-3">
-                <input required class="form-control" type="file" id="formFile">
+                <input required class="form-control" type="file" id="formFile" multiple="multiple">
                 <p class="error-text" id="error-file"></p>
             </div>
         </div>
@@ -89,25 +89,27 @@
         }
 
         function importCsv(){  
-
+            var formData = new FormData();
             fileCsv = $("#formFile").get(0).files[0];
-            if(fileCsv == null){
+            let listFile = $("#formFile").get(0).files;
+
+            if(listFile.length < 1){
                 $("#error-file").text("file wajib diisi")
                 return
             }
 
-            if(fileCsv.size > 1048576  ){
-                console.log(fileCsv.size);
-                $("#error-file").text("Maximal ukuran file 1Mb")
-                return
+            for (let index = 0; index < listFile.length; index++) {
+                if(listFile[index].size > 1048576  ){
+                    $("#error-file").text("Maximal ukuran file 1Mb")
+                    return
+                }
+                formData.append("file[]", listFile[index])
             }
 
             showLoadingImport();
             $("#uploadFileModal").modal("hide");
 
             let url = "{{url('/api/v1/import')}}";
-            var formData = new FormData();
-            formData.append("file", fileCsv)
 
             $.ajax({
                 url: url,
@@ -118,7 +120,9 @@
                     if(!result.status){
                         showMessage(false, result.message);
                     }else{
-                        renderData([result.data], true);
+                        result.data.forEach(element => {
+                            renderData([element], true);
+                        });
                         showMessage(true, "Success");
                     }
                 },
