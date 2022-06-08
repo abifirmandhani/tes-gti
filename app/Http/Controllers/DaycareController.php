@@ -101,7 +101,7 @@ class DaycareController extends Controller
     public function import(Request $request){
         try {   
             $validator = Validator::make($request->all(), [
-                'file'   => 'required|file|mimes:zip',
+                'file'   => 'required|file|mimes:zip|max:5120',
             ]); 
             if ($validator->fails()) {
                 $data = $validator->errors();
