@@ -20,4 +20,5 @@ Route::group([
 ], function(){
     Route::resource('daycares', DaycareController::class);
     Route::post('import', "DaycareController@import");
+    Route::get('export', "DaycareController@export");
 });

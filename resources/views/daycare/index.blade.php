@@ -10,6 +10,7 @@
             </div>
             Import Data
         </button>
+        <a href="{{url('api/v1/export')}}" class="btn btn-md btn-warning">Export</a>
         
     </div>
 

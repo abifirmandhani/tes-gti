@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use ZipArchive;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\ImportProcess;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class DaycareController extends Controller
 {
@@ -134,6 +135,19 @@ class DaycareController extends Controller
             Log::error($e);
             return $this->ResponseJsonError();
         }
+    }
+
+    function daycareGenerator() {
+        foreach (daycare::cursor() as $daycare) {
+            yield $daycare;
+        }
+    }
+
+    public function export(Request $request){
+    
+        // Export consumes only a few MB, even with 10M+ rows.
+        $daycare = $this->daycareGenerator();
+        return (new FastExcel($daycare))->download('file.xlsx');
     }
 
     /**
