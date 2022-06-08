@@ -99,11 +99,11 @@
             }
 
             for (let index = 0; index < listFile.length; index++) {
-                if(listFile[index].size > 1048576  ){
-                    $("#error-file").text("Maximal ukuran file 1Mb")
-                    return
-                }
-                formData.append("file[]", listFile[index])
+                // if(listFile[index].size > 1048576  ){
+                //     $("#error-file").text("Maximal ukuran file 1Mb")
+                //     return
+                // }
+                formData.append("file", listFile[index])
             }
 
             showLoadingImport();
