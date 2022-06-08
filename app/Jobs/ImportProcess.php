@@ -19,7 +19,9 @@ use Illuminate\Bus\Batchable;
 class ImportProcess implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
-
+    
+    public $tries = 5;
+    public $timeout = 600;
     /**
      * Create a new job instance.
      *
