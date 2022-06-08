@@ -100,10 +100,10 @@
             }
 
             for (let index = 0; index < listFile.length; index++) {
-                // if(listFile[index].size > 1048576  ){
-                //     $("#error-file").text("Maximal ukuran file 1Mb")
-                //     return
-                // }
+                if(listFile[index].size > 5048576  ){
+                    $("#error-file").text("Maximal ukuran file 5Mb")
+                    return
+                }
                 formData.append("file", listFile[index])
             }
 
