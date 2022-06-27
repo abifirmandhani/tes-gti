@@ -11,6 +11,9 @@
             Import Data
         </button>
         <a href="{{url('api/v1/export')}}" class="btn btn-md btn-warning">Export</a>
+        <div  style="display: none" class="progress mt-3" style="height: 25px">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%; height: 100%">75%</div>
+        </div>
         
     </div>
 
@@ -23,10 +26,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="mb-3">
-                <input required class="form-control" type="file" id="formFile" multiple="multiple">
-                <p class="error-text" id="error-file"></p>
-            </div>
+            <button id="browseFile" class="btn btn-primary">Browse File</button>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -78,6 +78,58 @@
 @endsection
 @section('script')
     <script>
+        let browseFile = $('#browseFile');
+        let resumable = new Resumable({
+            target: '{{ route('files.upload.large') }}',
+            query:{_token:'{{ csrf_token() }}'} ,// CSRF token
+            fileType: ['zip'],
+            chunkSize: 10*1024*1024, // default is 1*1024*1024, this should be less than your maximum limit in php.ini
+            headers: {
+                'Accept' : 'application/json'
+            },
+            testChunks: false,
+            throttleProgressCallbacks: 1,
+        });
+
+        resumable.assignBrowse(browseFile[0]);
+
+        resumable.on('fileAdded', function (file) { // trigger when file picked
+            $("#uploadFileModal").modal("hide");
+            showProgress();
+            resumable.upload() // to actually start uploading.
+        });
+
+        resumable.on('fileProgress', function (file) { // trigger when file progress update
+            updateProgress(Math.floor(file.progress() * 100));
+        });
+
+        resumable.on('fileSuccess', function (file, response) { // trigger when file upload complete
+            response = JSON.parse(response)
+            hideProgress()
+        });
+
+        resumable.on('fileError', function (file, response) { // trigger when there is any error
+            alert('file uploading error.')
+        });
+
+
+        let progress = $('.progress');
+        function showProgress() {
+            progress.find('.progress-bar').css('width', '0%');
+            progress.find('.progress-bar').html('0%');
+            progress.find('.progress-bar').removeClass('bg-success');
+            progress.show();
+        }
+
+        function updateProgress(value) {
+            progress.find('.progress-bar').css('width', `${value}%`)
+            progress.find('.progress-bar').html(`${value}%`)
+        }
+
+        function hideProgress() {
+            progress.hide();
+        }
+
         $("document").ready(function(){
             let url = "{{url('/api/v1/daycares')}}";
             getData(url);

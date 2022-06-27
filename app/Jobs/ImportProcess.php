@@ -113,6 +113,8 @@ class ImportProcess implements ShouldQueue
                 }
     
                 $data = daycare::create($payload);
+                
+                unlink($this->path);
     }
 
     public function validator($request){

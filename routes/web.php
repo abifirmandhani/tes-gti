@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DaycareController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,9 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect("daycares");
 });
+Route::post('file-upload/upload-large-files', [DaycareController::class, 'uploadLargeFiles'])->name('files.upload.large');
 
 Route::group([
     "namespace" => "App\Http\Controllers"
 ], function(){
     Route::resource('daycares', DaycareViewController::class);
+    Route::get('upload', function(){
+        return view("upload");
+    });
 });

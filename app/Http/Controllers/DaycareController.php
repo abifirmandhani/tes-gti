@@ -13,6 +13,12 @@ use ZipArchive;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\ImportProcess;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Facades\Storage;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 class DaycareController extends Controller
 {
@@ -131,6 +137,52 @@ class DaycareController extends Controller
                 Log::error("Failed open ZIP");
                 return $this->ResponseJsonError();
             }
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->ResponseJsonError();
+        }
+    }
+
+    public function uploadLargeFiles(Request $request) {
+        try {
+            $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
+    
+            if (!$receiver->isUploaded()) {
+                // file not uploaded
+            }
+        
+            $fileReceived = $receiver->receive(); // receive file
+            if ($fileReceived->isFinished()) { // file uploading is complete / all chunks are uploaded
+                $batch  = Bus::batch([])->dispatch();
+                $zip = new ZipArchive;
+                if ($zip->open($fileReceived->getPathName(), ZipArchive::RDONLY) === TRUE) {
+                    $zip->extractTo(public_path().'/import');
+                    
+                    for ($i=0; $i < $zip->count(); $i++) { 
+                        $path = public_path().'/import/'.$zip->getNameIndex($i);
+                        $batch->add(new ImportProcess($path));
+                    }
+
+                    $file = $fileReceived->getFile();
+                    $zip->close();
+                    
+                    unlink($file->getPathname());
+                    return [
+                        'path' => asset('storage/'),
+                        'filename' =>""
+                    ];
+                }else{
+                    Log::error("Failed open ZIP");
+                    return $this->ResponseJsonError();
+                }
+            }
+        
+            // otherwise return percentage information
+            $handler = $fileReceived->handler();
+            return [
+                'done' => $handler->getPercentageDone(),
+                'status' => true
+            ];
         } catch (\Exception $e) {
             Log::error($e);
             return $this->ResponseJsonError();
