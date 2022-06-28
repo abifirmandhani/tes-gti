@@ -19,6 +19,7 @@ use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 
 class DaycareController extends Controller
 {
@@ -305,6 +306,18 @@ class DaycareController extends Controller
         }
     }
 
-
+    public function getJobStatus(){
+        try {
+            $data = DB::table('job_batches')->orderBy('created_at', "desc")->get();
+            return $this->ResponseJson(
+                true, 
+                CONFIG("statusmessage.SUCCESS"),
+                $data
+            );
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->ResponseJsonError();
+        }
+    }
 
 }

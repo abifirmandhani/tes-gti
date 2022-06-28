@@ -11,6 +11,9 @@
             Import Data
         </button>
         <a href="{{url('api/v1/export')}}" class="btn btn-md btn-warning">Export</a>
+        <button id="btnImport" onclick="openModalJob()" class="btn btn-md btn-secondary">
+            Check Import Status
+        </button>
         <div  style="display: none" class="progress mt-3" style="height: 25px">
             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%; height: 100%">75%</div>
         </div>
@@ -19,21 +22,52 @@
 
     <!-- Modal -->
     <div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <button id="browseFile" class="btn btn-primary">Browse File</button>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="importCsv()">Save changes</button>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <button id="browseFile" class="btn btn-primary">Browse File</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="importCsv()">Save changes</button>
+            </div>
+            </div>
         </div>
     </div>
+
+    <!-- Modal Status Job-->
+    <div class="modal fade" id="jobStatusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Status File Upload</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Total File</th>
+                            <th>Total File Selesai</th>
+                            <th>Total File Gagal</th>
+                            <th>Tanggal Upload</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-job-status">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
     </div>
 
     <br>
@@ -141,6 +175,12 @@
             $("#uploadFileModal").modal("show");
         }
 
+        function openModalJob(){
+            $("#body-job-status").html("");
+            $("#jobStatusModal").modal("show");
+            getJobStatus();
+        }
+
         function importCsv(){  
             var formData = new FormData();
             fileCsv = $("#formFile").get(0).files[0];
@@ -235,6 +275,45 @@
                 
             });
         }
+
+        function getJobStatus(){
+            $.ajax({
+                url: "{{url('/api/v1/jobStatus')}}",
+                statusCode: {
+                    500: function(xhr) {
+                        console.log("Internal Server Error");
+                    },
+                },
+                success: function(result){
+                    if(!result.status){
+                        console.log(result.message);
+                    }else{
+                        let data = result.data;
+                        let html = ``;
+                        for (let index = 0; index < data.length; index++) {
+                            let status = "Berjalan";
+                            if(data[index].cancelled_at != null){
+                                status = "Dibatalkan";
+                            }
+                            else if(data[index].finished_at != null){
+                                status = "Selesai";
+                            }
+                            html += `
+                            <tr>
+                                <td>`+ data[index].total_jobs +`</td>
+                                <td>`+ (data[index].total_jobs - data[index].pending_jobs) +" ("+ ((data[index].total_jobs - data[index].pending_jobs) / data[index].total_jobs * 100).toFixed(2)  +`%) </td>
+                                <td>`+ data[index].failed_jobs +`</td>
+                                <td>`+ data[index].created_at +`</td>
+                                <td>`+ status +`</td>
+                            </tr>`;
+                        }
+                        $("#body-job-status").append(html);
+                    }
+                },
+                
+            });
+        }
+        
 
         function renderData(data, isInsertLast = false){
             let html = ``;
