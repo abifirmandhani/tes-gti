@@ -11,7 +11,7 @@
             Import Data
         </button>
         <a href="{{url('api/v1/export')}}" class="btn btn-md btn-warning">Export</a>
-        <button id="btnImport" onclick="openModalJob()" class="btn btn-md btn-secondary">
+        <button onclick="openModalJob()" class="btn btn-md btn-secondary">
             Check Import Status
         </button>
         <div  style="display: none" class="progress mt-3" style="height: 25px">
