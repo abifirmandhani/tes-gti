@@ -4,7 +4,7 @@
  
     <div class="text-right">
         <a href="{{url('daycares/create')}}" class="btn btn-md btn-success">Create Data</a>
-        <button id="btnImport" onclick="openModalFile()" class="btn btn-md btn-primary">
+        <button id="btnImport" class="btn btn-md btn-primary">
             <div style="display:none;" class="spinner-border spinner-border-sm spinner-import" role="status">
                 <span  class="visually-hidden">Loading...</span>
             </div>
@@ -29,6 +29,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div class="mb-3">
+                    <input required class="form-control" type="file" id="formFile">
+                    <p class="error-text" id="error-file"></p>
+                </div>
                 <button id="browseFile" class="btn btn-primary">Browse File</button>
             </div>
             <div class="modal-footer">
@@ -112,7 +116,7 @@
 @endsection
 @section('script')
     <script>
-        let browseFile = $('#browseFile');
+        let browseFile = $('#btnImport');
         let resumable = new Resumable({
             target: '{{ route('files.upload.large') }}',
             query:{_token:'{{ csrf_token() }}'} ,// CSRF token
@@ -121,6 +125,14 @@
             headers: {
                 'Accept' : 'application/json'
             },
+            maxFileSize : 100 * 1024 * 1024,
+            maxFileSizeErrorCallback(file, errorCount){
+                showMessage(false, "Maksimal file 100Mb");
+            },
+            maxFiles : 1,
+            maxFilesErrorCallback(files, errorCount){
+                showMessage(false, "Maksimal 1 file");
+            },
             testChunks: false,
             throttleProgressCallbacks: 1,
         });
@@ -128,8 +140,8 @@
         resumable.assignBrowse(browseFile[0]);
 
         resumable.on('fileAdded', function (file) { // trigger when file picked
-            $("#uploadFileModal").modal("hide");
             showProgress();
+            $("#btnImport").prop('disabled', true);
             resumable.upload() // to actually start uploading.
         });
 
@@ -140,10 +152,12 @@
         resumable.on('fileSuccess', function (file, response) { // trigger when file upload complete
             response = JSON.parse(response)
             hideProgress()
+            $("#btnImport").prop('disabled', false);
         });
 
         resumable.on('fileError', function (file, response) { // trigger when there is any error
             alert('file uploading error.')
+            $("#btnImport").prop('disabled', false);
         });
 
 
