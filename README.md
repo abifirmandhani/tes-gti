@@ -7,6 +7,25 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Instalation Step
+
+### Setup Project
+1. Buat file .env di root folder projek
+2. sesuaikan data berikut di .env :
+- APP_DEBUG = false
+- APP_URL = host url
+- DB_HOST
+- DB_PORT
+- DB_USERNAME
+- DB_PASSWORD
+3. jalankan "composer install" di folder root projek untuk instalasi package di laravel
+4. jalankan "php artisan migrate" di folder root projek untuk generate table di database
+
+### Setup Cron
+(sesuaikan path lokasi projek)
+- /usr/local/bin/php /home/koneksik/public_html/project_folder/artisan queue:listen
+
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
